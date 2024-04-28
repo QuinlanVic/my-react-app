@@ -1,7 +1,7 @@
 // import {logo} from './logo.svg';
 import './App.css';
 
-import {useReducer} from 'react';
+import {createContext, useContext, useState, useReducer, useMemo, useCallback} from 'react';
 
 // NEW TYPESCRIPT FILE ************************************************************************************
 // types and hooks 
@@ -59,42 +59,168 @@ function stateReducer(state: State, action: CounterAction): State {
   }
 }
 
-export default function App() {
-  // useReducer Hook which takes in a reducer funciton and initial state
-  const [state, dispatch] = useReducer(stateReducer, initialState);
-  // or more explicitly
-  // const [state, dispatch] = useReducer<State>(stateReducer, initialState);
+// export default function App() {
+//   // useReducer Hook which takes in a reducer funciton and initial state
+//   const [state, dispatch] = useReducer(stateReducer, initialState);
+//   // or more explicitly - give type to "useReducer" Hook
+//   // const [state, dispatch] = useReducer<State>(stateReducer, initialState);
 
-  // couple arrow functions to change the value of the state
-  const addFive = () => dispatch({ type: "setCount", value: state.count + 5 });
-  const reset = () => dispatch({ type: "reset" });
+//   // couple arrow functions to change the value of the state
+//   const addFive = () => dispatch({ type: "setCount", value: state.count + 5 });
+//   const reset = () => dispatch({ type: "reset" });
 
+//   return (
+//     <div>
+//       <h1>Welcome to my counter</h1>
+
+//       <p>Count: {state.count}</p>
+//       <button onClick={addFive}>Add 5</button>
+//       <button onClick={reset}>Reset</button>
+//     </div>
+//   );
+// }
+
+// "useContext" Hook 
+// technique for passing data down the component tree without having to pass props through components
+// used by creating a provider component and often by creating a Hook to consume the value in a child component
+// The type of the value provided by the context is inferred from the value passed to the createContext
+
+type Theme = "light" | "dark" | "system";
+// initial value of "system" given to createContext with type "Theme"
+const ThemeContext = createContext<Theme>("system")
+
+// useContext 
+const useGetTheme = () => useContext(ThemeContext) 
+
+// export default function App() {
+//   // initial value of "light" given to "useState" with type "Theme"
+//   const [theme, setTheme] = useState<Theme>('light');
+
+//   return (
+//     // provider function used to get state from component
+//     <ThemeContext.Provider value={theme}>
+//       <MyComponent />
+//     </ThemeContext.Provider>
+//   )
+// }
+
+// gets the theme from "useContext" Hook and displays it
+// function MyComponent() {
+//   const theme = useGetTheme();
+
+//   return (
+//     <div>
+//       <p>Current theme: {theme}</p>
+//     </div>
+//   )
+// }
+
+// "useMemo" Hook
+// null errors can kreep in if you do not have a suitable default value
+// you need to explicitly set ContextShape | null on the createContext
+// BUT
+// you need to eliminate the | null in the type for context consumers
+// recommendation: have the Hook do a runtime check for it’s existence and throw an error when not present
+// for example
+
+// This is a simpler example, but you can imagine a more complex object here
+type ComplexObject = {
+  kind: string
+};
+
+// you need to explicitly set ContextShape | null on the createContext
+// BUT
+// you need to eliminate the | null in the type for context consumers
+// The context is created with `| null` in the type, to accurately reflect the default value.
+const Context = createContext<ComplexObject | null>(null);
+
+// The `| null` will be removed via the check in the Hook.
+// have to use context.provider with useGetComplexObject or this error pops us
+// i.e.:
+//   return (
+//     <Context.Provider value={object}>
+//       <MyComponent />
+//     </Context.Provider>
+//   )
+// }
+const useGetComplexObject = () => {
+  const object = useContext(Context);
+  // not null is true hehe
+  if (!object) { throw new Error("useGetComplexObject must be used within a Provider") }
+  return object;
+}
+
+// export default function App() {
+//   // The useMemo Hooks will create/re-access a memorized value from a function call, 
+//   // re-running the function only when dependencies passed as the 2nd parameter are changed. 
+//   // The result of calling the Hook is inferred from the return value from the function in the 1st parameter
+//   const object = useMemo(() => ({ kind: "complex" }), []);
+
+//   // You can be more explicit by providing a type argument to the Hook
+//   // The type of visibleTodos is inferred from the return value of filterTodos
+//   // const visibleTodos = useMemo(() => filterTodos(todos, tab), [todos, tab]);
+
+
+//   return (
+//     <Context.Provider value={object}>
+//       <MyComponent />
+//     </Context.Provider>
+//   )
+// }
+
+// // use "useContext" to get the object and display it
+// function MyComponent() {
+//   const object = useGetComplexObject();
+
+//   return (
+//     <div>
+//       <p>Current object: {object.kind}</p>
+//     </div>
+//   )
+// }
+
+// "useCallback" Hook
+// The useCallback provide a stable reference to a function as long as the dependencies 
+// passed into the second parameter are the same. Like useMemo, the function’s type is inferred 
+// from the return value of the function in the first parameter, 
+// and you can be more explicit by providing a type argument to the Hook.
+
+// When working in TypeScript strict mode useCallback requires adding types for the parameters in your callback
+// This is because the type of the callback is inferred from the return value of the function, 
+// and without parameters the type cannot be fully understood
+// Depending on your code-style preferences, you could use the *EventHandler functions from the React types 
+// to provide the type for the event handler at the same time as defining the callback
+
+export default function Form() {
+  const [value, setValue] = useState("Change me");
+  // type for useCallback in <> (only changes state when second parameter is changed)
+  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>((event) => {
+    setValue(event.currentTarget.value);
+  }, [setValue])
+  
   return (
-    <div>
-      <h1>Welcome to my counter</h1>
-
-      <p>Count: {state.count}</p>
-      <button onClick={addFive}>Add 5</button>
-      <button onClick={reset}>Reset</button>
-    </div>
+    <>
+      <input value={value} onChange={handleChange} />
+      <p>Value: {value}</p>
+    </>
   );
 }
 
-// "useContext" Hook 
+
 
 // **********************************************************************************************************
 
 // type declaration (object type)
-interface MyButtonProps {
-  // text to display inside the button
-  title : string;
-  // whether the button can be interacted with
-  disabled: boolean;
-}
+// interface MyButtonProps {
+//   // text to display inside the button
+//   title : string;
+//   // whether the button can be interacted with
+//   disabled: boolean;
+// }
 
-function MyButton({ title, disabled }: MyButtonProps) {
-  return <button disabled={disabled}>{title}</button>;
-}
+// function MyButton({ title, disabled }: MyButtonProps) {
+//   return <button disabled={disabled}>{title}</button>;
+// }
 
 // export default function MyApp() {
 //   return (
