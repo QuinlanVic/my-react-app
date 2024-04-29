@@ -52,35 +52,84 @@ import './App.css';
 
 // "useState" Hook to keep track of the application state
 // "FavoriteColor" component = function to display colours and trigger changes
-function FavoriteColor() {
-  // initially set to red
-  const [color, setColor] = useState("red");
+// function FavoriteColor() {
+//   // initially set to red
+//   // currentState and function to change the state
+//   // destructuring the return values form "useState"
+//   // We should never directly update state. Ex: color = "red" is not allowed.
+//   const [color, setColor] = useState("red");
+  
+//   return (
+//     <>
+//       <h1>My favorite color is {color}!</h1>
+//       {/* use button to update state */}
+//       <button
+//         type="button"
+//         onClick={() => setColor("blue")}
+//       >Blue</button>
+//       <button
+//         type="button"
+//         onClick={() => setColor("red")}
+//       >Red</button>
+//       <button
+//         type="button"
+//         onClick={() => setColor("pink")}
+//       >Pink</button>
+//       <button
+//         type="button"
+//         onClick={() => setColor("green")}
+//       >Green</button>
+//     </>
+//   );
+// }
+
+// useState continued...
+// it can track almost anything and you can have multiple
+function Car7() {
+  // const [brand, setBrand] = useState("Ford");
+  // const [model, setModel] = useState("Mustang");
+  // const [year, setYear] = useState("1964");
+  // const [color, setColor] = useState("red");
+  // Or, we can just use one state and include an object instead!
+  const [car, setCar] = useState({
+    brand: "Ford",
+    model: "Mustang",
+    year: "1964",
+    color: "red"  
+  })
+
+  //   When state is updated, the entire state gets overwritten.
+  // What if we only want to update the color of our car?
+  // If we only called setCar({color: "blue"}), this would remove the brand, model, and year from our state.
+  // We can use the JavaScript spread operator to help us...
+  const updateColor = () => {
+    // Because we need the current value of state, we pass a function into our setCar function. 
+    // This function receives the previous value.
+    setCar (previousState => {
+      return {...previousState, color:"blue"}
+    })
+  }
 
   return (
     <>
-      <h1>My favorite color is {color}!</h1>
+      <h1>My {car.brand}</h1>
+      <p>
+        It is a {car.color} {car.model} from {car.year}.
+      </p>
       <button
         type="button"
-        onClick={() => setColor("blue")}
-      >Blue</button>
-      <button
-        type="button"
-        onClick={() => setColor("red")}
-      >Red</button>
-      <button
-        type="button"
-        onClick={() => setColor("pink")}
-      >Pink</button>
-      <button
-        type="button"
-        onClick={() => setColor("green")}
-      >Green</button>
+        onClick={updateColor} 
+        >
+        Blue
+      </button>
     </>
-  );
+  )
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<FavoriteColor />);
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(<FavoriteColor />);
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<Car7 />)
 
 // REACT ROUTER routing
 // export default function App() {
