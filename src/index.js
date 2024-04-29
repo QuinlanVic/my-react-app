@@ -17,6 +17,7 @@
 // reportWebVitals();
 
 // imports
+// You must import Hooks from react.
 import React, { StrictMode, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -33,13 +34,53 @@ import App from './App.tsx'
 import './App.css';
 
 // NEW TYPESCRIPT **********************
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+// const root = ReactDOM.createRoot(document.getElementById("root"));
+// root.render(
+//   <StrictMode>
+//     <App />
+//   </StrictMode>
+// );
+// REACT HOOKS - W3 Schools
+// Hooks allow function components to have access to state and other React features. 
+// Because of this, class components are generally no longer needed.
+// Hooks allow us to "hook" into React features such as state and lifecycle methods.
 
+// HOOK RULES
+// Hooks can only be called inside React function components.
+// Hooks can only be called at the top level of a component.
+// Hooks cannot be conditional
+
+// "useState" Hook to keep track of the application state
+// "FavoriteColor" component = function to display colours and trigger changes
+function FavoriteColor() {
+  // initially set to red
+  const [color, setColor] = useState("red");
+
+  return (
+    <>
+      <h1>My favorite color is {color}!</h1>
+      <button
+        type="button"
+        onClick={() => setColor("blue")}
+      >Blue</button>
+      <button
+        type="button"
+        onClick={() => setColor("red")}
+      >Red</button>
+      <button
+        type="button"
+        onClick={() => setColor("pink")}
+      >Pink</button>
+      <button
+        type="button"
+        onClick={() => setColor("green")}
+      >Green</button>
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<FavoriteColor />);
 
 // REACT ROUTER routing
 // export default function App() {

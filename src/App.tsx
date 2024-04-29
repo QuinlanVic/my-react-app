@@ -5,6 +5,107 @@ import {createContext, useContext, useState, useReducer, useMemo, useCallback} f
 
 // NEW TYPESCRIPT FILE ************************************************************************************
 // types and hooks 
+// Useful Types
+// DOM Events
+// When working with DOM events in React, the type of the event can often be inferred from the event handler. 
+// However, when you want to extract a function to be passed to an event handler, 
+// you will need to explicitly set the type of the event.
+// If you need to use an event that is not included in this list, use the React.SyntheticEvent type, 
+// which is the base type for all events.
+export default function Form() {
+  // initial value
+  const [value, setValue] = useState("Change me");
+  // have to explicitly set the type of the event
+  // event handler passed a function
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setValue(event.currentTarget.value);
+  }
+
+  return (
+    <>
+      <input value={value} onChange={handleChange} />
+      <p>Value: {value}</p>
+    </>
+  );
+}
+
+// Children
+// There are two common paths to describing the children of a component. The first is to use the React.ReactNode type, which is a union of all the possible types that can be passed as children in JSX
+interface ModalRendererProps {
+  title: string;
+  children: React.ReactNode;
+}
+// This is a very broad definition of children. 
+// The second is to use the React.ReactElement type, which is 
+// only JSX elements and not JavaScript primitives like strings or numbers
+interface ModalRendererProps2 {
+  title: string;
+  children: React.ReactElement;
+}
+// Note, that you cannot use TypeScript to describe that the children are a certain type of JSX elements, 
+// so you cannot use the type-system to describe a component which only accepts <li> children
+
+// import React from "react"
+
+// React.ReactNode accepts the most inputs
+interface ReactNodeProps {
+  children: React.ReactNode;
+}
+
+const RNode = (props: ReactNodeProps) => <div>{props.children}</div>
+
+const ReactNodeApp = () => <>
+<RNode><p>One element</p></RNode>
+<RNode>
+  <>
+    <p>Fragments for</p>
+    <p>More elements</p>
+  </>
+</RNode>
+<RNode>1</RNode>  
+<RNode>Hello</RNode>
+<RNode>{null}</RNode>
+<RNode>{true}</RNode>
+
+{/* Must have children though */}
+{/* <RNode /> */}
+</>
+
+
+// React.ReactElement accepts only JSX elements
+interface ReactElementProps {
+children: React.ReactElement;
+}
+
+const RElement = (props: ReactElementProps) => <div>{props.children}</div>
+
+const ReactElementApp = () => <>
+<RElement><p>More elements</p></RElement>
+<RElement>
+  <>
+    <p>More elements</p><p>More elements</p>
+  </>
+</RElement>
+
+{/* // Must be a JSX element */}
+{/* <RElement>1</RElement>  
+<RElement>Hello</RElement>
+<RElement>{null}</RElement>
+<RElement>{true}</RElement> */}
+
+{/* // Must have children though
+<RElement /> */}
+</>
+
+
+// Style Props
+// When using inline styles in React, you can use React.CSSProperties to describe the object passed to the style prop. 
+// This type is a union of all the possible CSS properties, and is a good way to ensure 
+// you are passing valid CSS properties to the style prop, and to get auto-complete in your editor.
+interface MyComponentProps {
+  style: React.CSSProperties;
+}
+
 // "useState" Hook
 // re-use the value passed in as the initial state to determine what the type of the value should be
 // Infer the type as "boolean"
@@ -191,20 +292,20 @@ const useGetComplexObject = () => {
 // Depending on your code-style preferences, you could use the *EventHandler functions from the React types 
 // to provide the type for the event handler at the same time as defining the callback
 
-export default function Form() {
-  const [value, setValue] = useState("Change me");
-  // type for useCallback in <> (only changes state when second parameter is changed)
-  const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>((event) => {
-    setValue(event.currentTarget.value);
-  }, [setValue])
+// export default function Form() {
+//   const [value, setValue] = useState("Change me");
+//   // type for useCallback in <> (only changes state when second parameter is changed)
+//   const handleChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>((event) => {
+//     setValue(event.currentTarget.value);
+//   }, [setValue])
   
-  return (
-    <>
-      <input value={value} onChange={handleChange} />
-      <p>Value: {value}</p>
-    </>
-  );
-}
+//   return (
+//     <>
+//       <input value={value} onChange={handleChange} />
+//       <p>Value: {value}</p>
+//     </>
+//   );
+// }
 
 
 
