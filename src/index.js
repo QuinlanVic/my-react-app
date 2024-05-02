@@ -23,7 +23,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // get components from each page
 import Layout from "./pages/Layout"
-import Home from "./pages/Home"
+// import Home from "./pages/Home"
 import Blogs from "./pages/Blogs"
 import Contact from "./pages/Contact"
 import NoPage from "./pages/NoPage"
@@ -33,6 +33,7 @@ import Car from './pages/Car'
 import App from './App.tsx'
 import './App.css';
 import Todos2 from './pages/Todos.js'
+import useFetch from './pages/useFetch.js'
 
 // NEW TYPESCRIPT **********************
 // const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -632,12 +633,35 @@ const expensiveCalculation = (num) => {
 };
 
 // CUSTOM HOOKS
+// Hooks are reusable functions
+// When you have component logic that needs to be used by multiple components, we can extract that logic to a custom Hook
+// Custom Hooks start with "use". Example: useFetch
+
+// Build a Hook
+// In the following code, we are fetching data in our Home component and displaying it.
+// We will use the JSONPlaceholder service to fetch fake data. 
+// This service is great for testing applications when there is no existing data.
+
+const Home = () => {
+  const [data] = useFetch("https://jsonplaceholder.typicode.com/todos");
+
+  return (
+    <>
+    {/* if there is data then the expression after && is executed */}
+      {data &&
+        data.map((item) => {
+          return <p key={item.id}>{item.title}</p>
+        })
+      }
+    </>
+  );
+};
 
 
 // const root = ReactDOM.createRoot(document.getElementById('root'));
 // root.render(<FavoriteColor />);
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App6 />)
+root.render(<Home />)
 
 
 // ****************************************************************************************************************************************

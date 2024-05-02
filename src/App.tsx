@@ -45,13 +45,12 @@ interface ModalRendererProps2 {
 // Note, that you cannot use TypeScript to describe that the children are a certain type of JSX elements, 
 // so you cannot use the type-system to describe a component which only accepts <li> children
 
-// import React from "react"
 
 // React.ReactNode accepts the most inputs
 interface ReactNodeProps {
   children: React.ReactNode;
 }
-
+// set type of props
 const RNode = (props: ReactNodeProps) => <div>{props.children}</div>
 
 const ReactNodeApp = () => <>
